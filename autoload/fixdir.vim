@@ -25,7 +25,7 @@ let s:fixdir_start = 0
 
 function! fixdir#fix(...) "{{{
   let curr_path = expand("%:p:h")
-  if a:0 > 1
+  if a:0 >= 1
     let fix_dir_path = s:get_absolute_path(curr_path, a:1)
   else
     let fix_dir_path = curr_path
@@ -34,14 +34,16 @@ function! fixdir#fix(...) "{{{
 endfunction "}}}
 
 function! s:bind_autocmd(fix_dir_path) "{{{
-  if !s:fixdir_start
-    exec "cd" a:fix_dir_path
-    augroup fixdir
-      au!
-      exec "au BufEnter * cd" a:fix_dir_path
-    augroup END
-    let s:fixdir_start = 1
+  if s:fixdir_start
+    call fixdir#clean()
+  else
   endif
+  exec "cd" a:fix_dir_path
+  augroup fixdir
+    au!
+    exec "au BufEnter * cd" a:fix_dir_path
+  augroup END
+  let s:fixdir_start = 1
 endfunction "}}}
 
 function! fixdir#clean() "{{{
