@@ -38,7 +38,7 @@ function! s:bind_autocmd(fix_dir_path) "{{{
     exec "cd" a:fix_dir_path
     augroup fixdir
       au!
-      exec "au BufNewFile,BufRead * cd" a:fix_dir_path
+      exec "au BufEnter * cd" a:fix_dir_path
     augroup END
     let s:fixdir_start = 1
   endif
