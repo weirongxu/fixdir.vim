@@ -8,36 +8,25 @@ set cpo&vim
 
 
 function! s:dir_complete(path) "{{{
-  let path = escape(expand(a:path), '?={}[]')
-  let paths = sort(filter(split(glob(path.'*'), '\n'), 'isdirectory(v:val)') )
+  let path = escape(expand(a:path, 1), '?={}[]')
+  let paths = sort(filter(split(glob(path.'*', 1), '\n'), 'isdirectory(v:val)') )
   return map(map(paths, 'v:val == path ? path."/" : v:val'), 'escape(v:val, ''\ '')')
 endfunction "}}}
 
 function! fixdir#complete(ArgLead, CmdLine, CursorPos) "{{{
-  if a:ArgLead =~ '^[\~/]'
-    return s:dir_complete(a:ArgLead)
-  else
-    return s:dir_complete(expand("%:p:h").'/'.a:ArgLead)
+  return s:dir_complete(s:get_absolute_path(a:ArgLead))
 endfunction "}}}
 
 
 let s:fixdir_start = 0
 
 function! fixdir#fix(...) "{{{
-  let curr_path = expand("%:p:h")
-  if a:0 >= 1
-    let fix_dir_path = s:get_absolute_path(curr_path, a:1)
-  else
-    let fix_dir_path = curr_path
-  endif
-  call s:bind_autocmd(fix_dir_path)
+  call s:bind_autocmd(call('s:get_absolute_path', a:000))
 endfunction "}}}
 
 function! s:bind_autocmd(fix_dir_path) "{{{
-  if s:fixdir_start
-    call fixdir#clean()
-  else
-  endif
+  if s:fixdir_start | call fixdir#stop() | endif
+
   exec "cd" a:fix_dir_path
   augroup fixdir
     au!
@@ -46,22 +35,25 @@ function! s:bind_autocmd(fix_dir_path) "{{{
   let s:fixdir_start = 1
 endfunction "}}}
 
-function! fixdir#clean() "{{{
+function! fixdir#stop() "{{{
   augroup fixdir
     au!
   augroup END
   let s:fixdir_start = 0
 endfunction "}}}
 
-function! s:get_absolute_path(curr_path, arg) "{{{
-  if a:arg =~ '^[/\~]'
-    return a:arg
+function! s:get_absolute_path(...) "{{{
+  let curr_path = expand("%:p:h")
+  if a:0 == 0 || empty(a:1)
+    return curr_path
+  endif
+  if a:1 =~ '^[/\~]'
+    return a:1
+  elseif a:1 =~ '^\.\/'
+    return curr_path.a:1[1:]
   else
-    if a:arg =~ '^\.\/'
-      return a:curr_path.a:arg[1:]
-    else
-      return a:curr_path.'/'.a:arg
-    endif
+    return curr_path.'/'.a:1
+  endif
 endfunction "}}}
 
 

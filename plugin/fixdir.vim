@@ -11,7 +11,7 @@ let g:fixdir_loaded = 1
 
 
 command! -nargs=? -complete=customlist,fixdir#complete FixDir call fixdir#fix(<f-args>)
-command! -nargs=0 FixDirClean call fixdir#clean()
+command! -nargs=0 FixDirStop call fixdir#stop()
 
 
 let &cpo = s:save_cpo
