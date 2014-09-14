@@ -1,0 +1,44 @@
+Execute (complete):
+  if has('win32') || has('win64')
+    let home = 'C:/Users/Administrator'
+  else
+    let home = '/home/raidou'
+  endif
+  let target_prefix = home.'/.vim/bundle/fixdir.vim/test'
+
+  let prefix = '~/.vim/bundle/fixdir.vim/test'
+  let cwd = getcwd()
+  " Log cwd
+  Log fixdir#complete(cwd, '', '')
+  function! _call(...)
+    let ret = call('scall#call', a:000)
+    if type(ret) == type([])
+      return map(ret, '_case(v:val)')
+    else
+      return _case(ret)
+    endif
+  endfunction
+  function! _case(path)
+    return substitute(a:path, '^.', '\U\0', '')
+  endfunction
+
+Execute (complete:get_absolute_path):
+  Log _call('autoload/fixdir.vim:get_absolute_path', '~')
+  AssertEqual _call('autoload/fixdir.vim:get_absolute_path', '~'), home
+  AssertEqual _call('autoload/fixdir.vim:get_absolute_path', prefix), target_prefix
+  AssertEqual _call('autoload/fixdir.vim:get_absolute_path', cwd), target_prefix
+
+Execute (complete:dir_complete):
+  AssertEqual _call('autoload/fixdir.vim:dir_complete', cwd), [target_prefix.'/']
+  AssertEqual _call('autoload/fixdir.vim:dir_complete', cwd.'/'),
+      \[
+      \   target_prefix.'/dir\ 3',
+      \   target_prefix.'/dir1',
+      \   target_prefix.'/dir2',
+      \]
+  let dir3 = target_prefix.'/dir\ 3'
+  AssertEqual _call('autoload/fixdir.vim:dir_complete', cwd.'/dir\ 3/'),
+      \[
+      \   dir3.'/dir1',
+      \   dir3.'/dir2',
+      \]

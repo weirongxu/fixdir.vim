@@ -8,9 +8,9 @@ set cpo&vim
 
 
 function! s:dir_complete(path) "{{{
-  let path = escape(expand(a:path, 1), '?={}[]')
-  let paths = sort(filter(split(glob(path.'*', 1), '\n'), 'isdirectory(v:val)') )
-  return map(map(paths, 'v:val == path ? path."/" : v:val'), 'escape(v:val, ''\ '')')
+  let path = escape(s:expand(a:path, 1), '?={}[]')
+  let paths = sort(filter(split(s:glob(path.'*', 1), '\n'), 'isdirectory(v:val)') )
+  return map(map(paths, 'v:val == path ? path."/" : v:val'), 'escape(s:trans_path(v:val), '' '')')
 endfunction "}}}
 
 function! fixdir#complete(ArgLead, CmdLine, CursorPos) "{{{
@@ -43,16 +43,41 @@ function! fixdir#stop() "{{{
 endfunction "}}}
 
 function! s:get_absolute_path(...) "{{{
-  let curr_path = expand("%:p:h")
+  " let curr_path = s:expand("%:p:h")
+  let curr_path = s:expand(getcwd())
   if a:0 == 0 || empty(a:1)
     return curr_path
   endif
-  if a:1 =~ '^[/\~]'
-    return a:1
+  if a:1 =~ '^\([/\~]\|[a-zA-Z]:\)'
+    return s:expand(a:1)
   elseif a:1 =~ '^\.\/'
     return curr_path.a:1[1:]
   else
     return curr_path.'/'.a:1
+  endif
+endfunction "}}}
+
+if has('win32') || has('win64')
+  function! s:expand(...) "{{{
+    return s:trans_path(call('expand', a:000))
+  endfunction "}}}
+  function! s:glob(...) "{{{
+    return s:trans_path(call('glob', a:000))
+  endfunction "}}}
+else
+  function! s:glob(...) "{{{
+    return call('glob', a:000)
+  endfunction "}}}
+  function! s:expand(...) "{{{
+    return call('expand', a:000)
+  endfunction "}}}
+endif
+
+function! s:trans_path(path) "{{{
+  if type(a:path) == type([])
+    return map(a:path, 's:trans_path(v:val)')
+  else
+    return substitute(a:path, '\\', '/', 'g')
   endif
 endfunction "}}}
 
