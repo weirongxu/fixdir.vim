@@ -7,12 +7,12 @@ Installation
 ----
 
 * Vundle
-```viml
+```vim
 Plugin 'weirongxu/fixdir.vim'
 ```
 
 * Neobundle
-```viml
+```vim
 NeoBundleLazy 'weirongxu/fixdir.vim', {
     \ 'commands' : [{ 'name': 'FixDir',
     \                 'complete': 'customlist,fixdir#complete'}
@@ -23,12 +23,12 @@ Usage
 ----
 
 Start fix directory. If `path` is omitted, FixDir use current directory.
-```viml
+```vim
 :FixDir [path]
 ```
 
 Stop fix directory.
-```viml
+```vim
 :FixDirStop
 ```
 
