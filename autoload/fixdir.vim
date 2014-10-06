@@ -20,6 +20,10 @@ endfunction "}}}
 
 let s:fixdir_start = 0
 
+function! fixdir#started() "{{{
+  return s:fixdir_start
+endfunction "}}}
+
 function! fixdir#fix(...) "{{{
   call s:bind_autocmd(call('s:get_absolute_path', a:000))
 endfunction "}}}

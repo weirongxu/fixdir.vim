@@ -32,3 +32,7 @@ Stop fix directory.
 :FixDirStop
 ```
 
+Function
+----
+
+fixdir#started
