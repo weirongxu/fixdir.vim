@@ -23,19 +23,27 @@ let s:fixdir_start = 0
 function! fixdir#started() "{{{
   return s:fixdir_start
 endfunction "}}}
+function! fixdir#path() "{{{
+  return s:fixdir_path
+endfunction "}}}
+
+function! fixdir#started() "{{{
+  return s:fixdir_start
+endfunction "}}}
 
 function! fixdir#fix(...) "{{{
   call s:bind_autocmd(call('s:get_absolute_path', a:000))
 endfunction "}}}
 
-function! s:bind_autocmd(fix_dir_path) "{{{
+function! s:bind_autocmd(fixdir_path) "{{{
   if s:fixdir_start | call fixdir#stop() | endif
 
-  exec "cd" a:fix_dir_path
+  exec "cd" a:fixdir_path
   augroup fixdir
     au!
-    exec "au BufEnter * cd" a:fix_dir_path
+    exec "au BufEnter * cd" a:fixdir_path
   augroup END
+  let s:fixdir_path = a:fixdir_path
   let s:fixdir_start = 1
 endfunction "}}}
 

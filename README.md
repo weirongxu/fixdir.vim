@@ -35,4 +35,5 @@ Stop fix directory.
 Function
 ----
 
-fixdir#started
+* `fixdir#started` Return whether fixdir start
+* `fixdir#path` Return fixdir path
