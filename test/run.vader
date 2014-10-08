@@ -1,9 +1,7 @@
+# requires: thinca/vim-scall
+
 Execute (complete):
-  if has('win32') || has('win64')
-    let home = 'C:/Users/Administrator'
-  else
-    let home = '/home/raidou'
-  endif
+  let home = expand('~')
   let target_prefix = home.'/.vim/bundle/fixdir.vim/test'
 
   let prefix = '~/.vim/bundle/fixdir.vim/test'
