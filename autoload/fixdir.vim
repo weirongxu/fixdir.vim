@@ -55,8 +55,8 @@ function! fixdir#stop() "{{{
 endfunction "}}}
 
 function! s:get_absolute_path(...) "{{{
-  " let curr_path = s:expand("%:p:h")
-  let curr_path = s:expand(getcwd())
+  let curr_path = s:expand("%:p:h")
+  " let curr_path = s:expand(getcwd())
   if a:0 == 0 || empty(a:1)
     return curr_path
   endif
@@ -77,11 +77,11 @@ if has('win32') || has('win64')
     return s:trans_path(call('glob', a:000))
   endfunction "}}}
 else
-  function! s:glob(...) "{{{
-    return call('glob', a:000)
-  endfunction "}}}
   function! s:expand(...) "{{{
     return call('expand', a:000)
+  endfunction "}}}
+  function! s:glob(...) "{{{
+    return call('glob', a:000)
   endfunction "}}}
 endif
 
