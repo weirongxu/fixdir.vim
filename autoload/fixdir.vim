@@ -23,12 +23,9 @@ let s:fixdir_start = 0
 function! fixdir#started() "{{{
   return s:fixdir_start
 endfunction "}}}
+
 function! fixdir#path() "{{{
   return s:fixdir_path
-endfunction "}}}
-
-function! fixdir#started() "{{{
-  return s:fixdir_start
 endfunction "}}}
 
 function! fixdir#fix(...) "{{{
@@ -55,8 +52,12 @@ function! fixdir#stop() "{{{
 endfunction "}}}
 
 function! s:get_absolute_path(...) "{{{
-  let curr_path = s:expand("%:p:h")
-  " let curr_path = s:expand(getcwd())
+  if s:fixdir_start
+    " let curr_path = s:fixdir_path
+    let curr_path = s:expand(getcwd())
+  else
+    let curr_path = s:expand("%:p:h")
+  endif
   if a:0 == 0 || empty(a:1)
     return curr_path
   endif
